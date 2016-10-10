@@ -528,7 +528,7 @@ declare module "mongoose" {
      * the child schema first before passing it into its parent.
      * @event init Emitted after the schema is compiled into a Model.
      */
-    constructor(definition?: Object, options?: SchemaOptions);
+    constructor(definition?: SchemaDefinition, options?: SchemaOptions);
 
     /** Adds key path / schema type pairs to this schema. */
     add(obj: Object, prefix?: string): void;
@@ -709,6 +709,61 @@ declare module "mongoose" {
      * assigned is Date.
      */
     timestamps?: Object;
+  }
+
+  /*
+   * Intellisense for Schema definitions
+   */
+  interface SchemaDefinition {
+    [path: string]: SchemaTypeOptions<any>;
+  }
+
+  /* extend this class to add schema type options for specific
+    * types, for example number provides min and max option */
+  interface SchemaTypeOptions<T> {
+    type?: T;
+    default?: SchemaTypeOptions.DefaultFunction<T>  | T;
+    get?: (value: T, schematype?: this) => T;
+    index?: SchemaTypeOptions.IndexOptions | boolean | string;
+    required?: SchemaTypeOptions.RequiredFunction<T> | boolean | string;
+    select?: boolean;
+    set?: (value: T, schematype?: this) => T;
+    sparse?: boolean;
+    text?: boolean;
+    unique?: boolean;
+    validate?:  SchemaTypeOptions.ValidateFunction<T> |
+      SchemaTypeOptions.ValidateOptions |
+      SchemaTypeOptions.ValidateOptions[];
+    [other: string]: any;
+  }
+
+  // Interface specific to schema type options should be scoped in this namespace
+  namespace SchemaTypeOptions {
+    interface IndexOptions {
+      background?: boolean,
+      sparse?: boolean,
+      type?: string,
+      unique?: boolean,
+      expires?: string
+    }
+
+    interface DefaultFunction<T> {
+      (): T;
+    }
+
+    interface RequiredFunction<T> {
+      (required: boolean, message?: string): T;
+    }
+
+    interface ValidateFunction<T> {
+      (obj: RegExp | Function, message?: string, type?: string): T;
+    }
+
+    interface ValidateOptions {
+      validator?: RegExp | Function,
+      msg?: string,
+      type?: string
+    }
   }
 
   /*

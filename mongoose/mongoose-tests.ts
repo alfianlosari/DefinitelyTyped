@@ -311,7 +311,9 @@ animalSchema.virtual('name.full').get(function () {
   return this.name.first + ' ' + this.name.last;
 });
 new mongoose.Schema({
-  child: new mongoose.Schema({ name: 'string' })
+  child: new mongoose.Schema({
+    name: String
+  })
 });
 new mongoose.Schema({
   eggs: {
@@ -321,7 +323,7 @@ new mongoose.Schema({
   },
   bacon: {
     type: Number,
-    required: [true, 'Why no bacon?']
+    required: 'Why no bacon?'
   },
   drink: {
     type: String,
@@ -1312,6 +1314,14 @@ interface Location extends mongoose.Document {
   openingTimes: any[];
   reviews: any[];
 };
+new mongoose.Schema({
+  rating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5
+  }
+})
 const locationSchema = new mongoose.Schema({
   name: { type: String, required: true },
   address: String,
